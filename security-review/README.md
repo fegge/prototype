@@ -90,14 +90,11 @@ findings; listed so they are not lost:
   `ast_build.rs`): stack overflow on deeply nested predicates. Reachable mainly at
   operator-supplied schema-load time (lower reachability); client-written `_access_control`
   `rule_json` is serde_json (recursion-limited). (Low–Medium.)
-- **`collect_reduce_verify_inputs` pending_writes fallback** for the survivor D-row
-  commitment (`retention/.../space_key.rs:~605`) — possible live boundary-key
-  substitution by a malicious reducer; does not expose deleted data. (Low; needs
-  DB-layer confirmation.)
-
-Two former candidates were **confirmed and promoted** to findings after verification:
+Former candidates **confirmed and promoted** to findings after verification:
 attacker-controlled `proof.degree_bits` → **018**; concrete unbounded-postcard-recursion
-path (`_retention` decode, pre-auth) → **017**.
+path (`_retention` decode, pre-auth) → **017**; the reduce survivor-commitment
+`pending_writes` fallback → **[019](findings/019-reduce-survivor-commitment-pending-writes-fallback.md)**
+(Low, contingent).
 
 ## Method
 
