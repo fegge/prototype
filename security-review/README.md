@@ -29,6 +29,7 @@ exploit/failure scenario, and a recommended fix.
 | [011](findings/011-retention-unbounded-hgk-resolution-dos.md) | Medium | Attacker-controlled `dgk_next` → unbounded HGK-resolution grind | Availability |
 | [012](findings/012-already-applied-branch-cache-poisoning.md) | Medium | Already-applied re-verify returns writes from an unanchored proof (cache/row-id poisoning) | Local integrity |
 | [013](findings/013-parent-clc-unchecked-cross-user-reorder.md) | Medium | `parent_clc` never verified on apply → independent users' changes reorderable | Verifiable history (ordering) |
+| [015](findings/015-concurrent-reads-observe-unverified-provisional-state.md) | Medium | Concurrent reads observe provisional, signature-unverified state during deferred verification | Authenticity (concurrency) |
 | [001](findings/001-unauthenticated-file-upload-memory-exhaustion.md) | Medium | Unauthenticated file upload buffers whole body before size check | Availability |
 
 ### Cross-cutting theme
@@ -63,6 +64,10 @@ serious (silent arbitrary-state substitution).
   key, not the ratchet.)
 - **AES-256-CTR field encryption** — fresh random 128-bit nonce per field; no key/counter
   reuse.
+- **List / TextArea CRDT ordering** — every `_lists` mutation computes prev/next links
+  deterministically from authenticated neighbor reads, enforces `list_number` consistency,
+  and checks parent existence + ACL; `_lists` is internal so no raw-row writes are
+  possible. The doubly-linked-list invariant holds inductively from the empty list.
 - **CLC extension** — the exact signed entry bytes are what gets appended; no unsigned
   server field enters the commitment.
 
