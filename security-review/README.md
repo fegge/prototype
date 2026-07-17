@@ -22,6 +22,7 @@ exploit/failure scenario, and a recommended fix.
 | [007](findings/007-reduce-does-not-erase-deleting-members-key.md) | High | `reduce()` never erases the deleting member's own key; deletion is reversible | Selective retention |
 | [010](findings/010-joining-client-no-genesis-root-of-trust.md) | High | Joining client has no genesis root of trust → server can fabricate the whole Space | Verifiable history (join) |
 | [003](findings/003-malformed-member-public-key-panics-rekey.md) | High | Malformed member `update_key` panics every rekey/invite | Insider robustness (DoS) |
+| [017](findings/017-unauthenticated-postcard-recursion-server-crash.md) | High | Unauthenticated stack-overflow crash via unbounded `StoredValue` postcard recursion in `_retention` decode (pre-auth) | Availability |
 | [002](findings/002-signature-missing-space-and-domain-separation.md) | Medium (latent) | Signatures bind no Space id / domain separator → cross-Space replay | Authenticity |
 | [005](findings/005-mve-default-soundness-96-bit.md) | Medium | Deployed mVE soundness is 96-bit, not 128-bit | Insider robustness |
 | [006](findings/006-recover-path-missing-canonical-commitment-check.md) | Medium | Key-recovery path lacks the canonical-commitment check → epoch rollback | Insider robustness / PCS |
@@ -31,6 +32,7 @@ exploit/failure scenario, and a recommended fix.
 | [013](findings/013-parent-clc-unchecked-cross-user-reorder.md) | Medium | `parent_clc` never verified on apply → independent users' changes reorderable | Verifiable history (ordering) |
 | [015](findings/015-concurrent-reads-observe-unverified-provisional-state.md) | Medium | Concurrent reads observe provisional, signature-unverified state during deferred verification | Authenticity (concurrency) |
 | [016](findings/016-deniable-authentication-not-provided-nonrepudiable-signatures.md) | Medium | "Deniable authentication" not provided — authorship uses non-repudiable, transferable signatures | Deniable authentication |
+| [018](findings/018-mve-stark-verifier-degree-bits-panic.md) | Medium | mVE/STARK verifier panics on attacker-controlled `proof.degree_bits` | Availability |
 | [001](findings/001-unauthenticated-file-upload-memory-exhaustion.md) | Medium | Unauthenticated file upload buffers whole body before size check | Availability |
 
 ### Cross-cutting theme
@@ -84,15 +86,18 @@ findings; listed so they are not lost:
 - **`collect_reduce_verify_inputs` prefers `pending_writes` for the survivor D-row
   commitment** (`space_key.rs:~605`), possibly allowing a live boundary-key substitution
   by a malicious reducer. Does not expose deleted data. (Low.)
-- **Attacker-controlled `proof.degree_bits`** into `setup_preprocessed` in mVE verify
-  (`zkp/src/mve/poseidon2.rs:~724`) — possible allocation-blowup DoS if plonky3 allocates
-  before validating against the expected trace height. (Needs a p3-verifier check.)
 - **Unbounded predicate-parser recursion** (`backend/acl-types`, `predicate.pest` /
   `ast_build.rs`): stack overflow on deeply nested predicates. Reachable mainly at
   operator-supplied schema-load time (lower reachability); client-written `_access_control`
   `rule_json` is serde_json (recursion-limited). (Low–Medium.)
-- **postcard depth** on client-supplied proof/action/retention structures (no explicit
-  recursion cap). (Low–Medium; consistent with the README DoS caveat.)
+- **`collect_reduce_verify_inputs` pending_writes fallback** for the survivor D-row
+  commitment (`retention/.../space_key.rs:~605`) — possible live boundary-key
+  substitution by a malicious reducer; does not expose deleted data. (Low; needs
+  DB-layer confirmation.)
+
+Two former candidates were **confirmed and promoted** to findings after verification:
+attacker-controlled `proof.degree_bits` → **018**; concrete unbounded-postcard-recursion
+path (`_retention` decode, pre-auth) → **017**.
 
 ## Method
 
