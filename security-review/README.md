@@ -30,6 +30,7 @@ exploit/failure scenario, and a recommended fix.
 | [012](findings/012-already-applied-branch-cache-poisoning.md) | Medium | Already-applied re-verify returns writes from an unanchored proof (cache/row-id poisoning) | Local integrity |
 | [013](findings/013-parent-clc-unchecked-cross-user-reorder.md) | Medium | `parent_clc` never verified on apply → independent users' changes reorderable | Verifiable history (ordering) |
 | [015](findings/015-concurrent-reads-observe-unverified-provisional-state.md) | Medium | Concurrent reads observe provisional, signature-unverified state during deferred verification | Authenticity (concurrency) |
+| [016](findings/016-deniable-authentication-not-provided-nonrepudiable-signatures.md) | Medium | "Deniable authentication" not provided — authorship uses non-repudiable, transferable signatures | Deniable authentication |
 | [001](findings/001-unauthenticated-file-upload-memory-exhaustion.md) | Medium | Unauthenticated file upload buffers whole body before size check | Availability |
 
 ### Cross-cutting theme
