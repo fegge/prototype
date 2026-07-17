@@ -17,6 +17,7 @@ exploit/failure scenario, and a recommended fix.
 | # | Severity | Title | Guarantee affected |
 |---|----------|-------|--------------------|
 | [008](findings/008-CRITICAL-ff-ragged-tail-unbound-data-commitment.md) | **Critical** | FF ragged tail doesn't bind `old_root` to the client DC → arbitrary state substitution | Verifiable history / integrity |
+| [014](findings/014-ff-recursion-program-id-unconstrained.md) | High (Critical w/ real-proofs) | FF recursion verifies prior chunk against an unconstrained, input-supplied image ID → forgeable proof chain | Verifiable history / FF soundness |
 | [004](findings/004-action-self-row-forged-authorization-bypass.md) | High | Action `self.*` forged for Delete/Update legs → assertion bypass + ACL-free cascade | Access control |
 | [007](findings/007-reduce-does-not-erase-deleting-members-key.md) | High | `reduce()` never erases the deleting member's own key; deletion is reversible | Selective retention |
 | [010](findings/010-joining-client-no-genesis-root-of-trust.md) | High | Joining client has no genesis root of trust → server can fabricate the whole Space | Verifiable history (join) |
